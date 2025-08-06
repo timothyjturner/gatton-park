@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Guest WiFi Access</title>
+</head>
+<body>
+<h1>Welcome to Our WiFi</h1>
+<form id="loginForm">
+  <label>Email Address:</label><br>
+  <input type="email" name="email" required><br><br>
+  <button type="submit">Connect</button>
+</form>
+
+<script>
+  // Extract Meraki's URLs from query string
+  const urlParams = new URLSearchParams(window.location.search);
+  const baseGrantUrl = urlParams.get('base_grant_url');
+  const userContinueUrl = urlParams.get('user_continue_url') || 'https://kineticbusiness.com/';
+
+  document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const email = e.target.email.value;
+
+    // Send email to your backend for logging
+    fetch('/capture_email.php', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: 'email=' + encodeURIComponent(email)
+    }).then(() => {
+      // Grant access via Meraki's system
+      window.location.href = `${baseGrantUrl}?continue_url=${encodeURIComponent(userContinueUrl)}`;
+    });
+  });
+</script>
+</body>
+</html>
